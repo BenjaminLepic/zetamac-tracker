@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "Zetamac Training Log",
+  "version": "1.0.0",
+  "description": "Record Zetamac scores, questions, answer-field keystrokes and training conditions locally.",
+  "permissions": ["storage", "unlimitedStorage"],
+  "background": {"service_worker": "background.js"},
+  "action": {"default_title": "Open Zetamac Training Log"},
+  "content_scripts": [{"matches": ["https://arithmetic.zetamac.com/*"], "js": ["core.js", "recorder.js"], "run_at": "document_start"}],
+  "options_page": "dashboard.html"
+}

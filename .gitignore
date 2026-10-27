@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+.env
+.env.*
+*.log
+*.zip
+backups/
+recordings/
+playwright-report/
+test-results/

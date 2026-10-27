@@ -1,0 +1,8 @@
+{
+  "name": "zetamac-training-log",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local Chrome / Edge Zetamac recorder",
+  "scripts": {"test": "node tests/integration.cjs"},
+  "devDependencies": {"playwright": "1.64.1"}
+}
