@@ -16,6 +16,13 @@ async function poll(fn,check,description){for(let i=0;i<100;i++){const v=await f
   context=await chromium.launchPersistentContext(profile,{channel:'chromium',headless:true,args:[`--disable-extensions-except=${base}`,`--load-extension=${base}`],viewport:{width:1440,height:1000}});
   let sw=context.serviceWorkers()[0]||await context.waitForEvent('serviceworker');
   const extensionId=new URL(sw.url()).host;
+  // Exercise the native WorkerGlobalScope fetch, rather than a mock that ignores its receiver.
+  const nativeFetchResult=await sw.evaluate(async()=>{
+    const probe=new ZetaDriveSync({storage:{},atomic:fn=>fn(),identity:{}});
+    return probe.request('data:application/json,%7B%22ok%22%3Atrue%7D','test-token');
+  });
+  assert.deepEqual(nativeFetchResult,{ok:true});
+  console.log('PASS: native fetch works from the extension service worker');
   const data=()=>sw.evaluate(()=>chrome.storage.local.get(null));
   const recorded=async()=>Object.values(await data()).filter(s=>s?.source==='recorded');
   await poll(data,d=>Object.values(d).filter(s=>s?.source==='historical').length===16,'seed import');

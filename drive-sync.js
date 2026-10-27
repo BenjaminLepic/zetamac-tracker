@@ -1,7 +1,8 @@
 /* All network work lives outside the recorder's local storage queue. */
 (function(root){
   class DriveSync {
-    constructor({storage,atomic,fetcher=fetch,identity,configured=()=>true,clock=()=>Date.now(),uuid=()=>crypto.randomUUID()}){
+    // Native fetch requires its Window/WorkerGlobalScope receiver, even when stored on an instance.
+    constructor({storage,atomic,fetcher=root.fetch.bind(root),identity,configured=()=>true,clock=()=>Date.now(),uuid=()=>crypto.randomUUID()}){
       Object.assign(this,{storage,atomic,fetcher,identity,configured,clock,uuid});
       this.running=null;this.generation=0;this.replacementTokens=new Map();
     }

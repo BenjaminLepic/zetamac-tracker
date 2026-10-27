@@ -1,5 +1,11 @@
 # Start syncing with either Google account
 
+## Update an existing sync installation to 1.1.1
+
+Version 1.1.1 fixes `Failed to execute 'fetch' on 'WorkerGlobalScope': Illegal invocation`. Replace the files inside your existing `zetamac-tracker-sync` folder with the files from the updated ZIP, keeping the folder path unchanged. In `chrome://extensions`, click the extension's reload button, then refresh its records page and retry **Connect Google Drive** or **Sync now**. Do not remove the installed extension; its local data and extension ID are unchanged.
+
+## First installation
+
 Google Cloud, the OAuth client and the app-data permission are configured. Both requested Google accounts are allowed to use this build. The project remains in Google's personal testing mode.
 
 1. In the original extension, choose **Records & backups → Export backup**. Keep that JSON file.
