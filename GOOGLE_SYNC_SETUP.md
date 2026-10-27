@@ -1,8 +1,8 @@
 # Configure Google Drive sync
 
-The extension is implemented and tested locally; Google account sync also needs an OAuth client issued by the owner of a Google Cloud project. The client ID is public configuration, not a client secret. Never put Google access tokens or private signing keys in this repository.
+This build includes a configured OAuth client in Google Cloud project `zetamac-training-log` (project number `195507153735`). Google Drive API is enabled, the app-data scope is configured, and the two requested accounts are registered as test users and project owners. The user must still connect the extension in each Chrome profile to authorize access to that account’s Drive data. Live authorization and a real Drive round trip require that final connection; automated sync tests use a simulated Drive service. The client ID is public configuration, not a client secret. Never put Google access tokens or private signing keys in this repository.
 
-## Google Cloud project owner
+## Reconfiguring under a different Google Cloud project
 
 1. In Google Cloud Console, create a dedicated project named **Zetamac Training Log**. Enabling billing is not required for this Drive-only integration.
 2. Enable **Google Drive API** in that project.

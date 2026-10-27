@@ -32,5 +32,11 @@
     "https://www.googleapis.com/*"
   ],
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtzK03zUTa3VNCMIYzfZ5vKhdjsGPP8+xRaeu7u6zCgAdkypwaOCWGq3NRV0HA7RJOgKz0W5SoFl08TCAI4vdg7EGGvSXYFTonlLtHBayZo7rjPU13gMOJnrcmqCYo9fQhdMZiJzH3SZ878zXetHfDyRpkrr37HeK/ULZV3fiYfUJ1Jfuzbs7w9IZQE0tM7kFx/0sn2xv6G6I7UlXhoDv5v/xS9cmpCp/+0WyaXcBXpLKe4RQISDJUC/yZK1OD6yCbS00PYRK+CrkGEC5jkptUndIGa3mqeIEh5g8QBNhOye52ixDBsNALZruvOq6v+2faK4oSHk6biWf6sxdzet5PwIDAQAB",
-  "minimum_chrome_version": "120"
+  "minimum_chrome_version": "120",
+  "oauth2": {
+    "client_id": "195507153735-fu5m591ckareeti4qhh4hl1jovkpndp7.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive.appdata"
+    ]
+  }
 }

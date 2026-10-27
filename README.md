@@ -30,9 +30,11 @@ The recorder uses the score increment to recognize acceptance. Identical consecu
 
 ## Google Drive sync
 
-Once Google's OAuth client is configured, open **Records & backups** and choose **Connect Google Drive**. Approve access to the application's own data folder. It does not request access to your other Drive files.
+This build includes the configured Google OAuth client. Open **Records & backups** and choose **Connect Google Drive**. Approve access to the application's own data folder. It does not request access to your other Drive files.
 
 Connecting uploads existing local game records, including full questions, key events and notes, and downloads records from that same Google account on other computers. Completed games and edits queue background sync after about 30 seconds; a periodic check runs about every two minutes while Chrome is running. **Sync now** runs a check immediately. Browser scheduling and network conditions can delay these checks. Games still record locally when offline. Older in-progress checkpoints can also sync after 45 seconds without edits; current game activity is never uploaded on every keypress.
+
+Use a separate Chrome profile for each Google account. Both requested accounts are permitted to connect; each keeps its own private Drive history. The extension connects one account per browser profile. Connecting another account after disconnecting uploads the records currently in that profile, so use separate profiles when you want histories to stay separate.
 
 The account email, last successful sync and any errors appear in the sync panel. **Disconnect** pauses syncing and clears the extension's cached Google tokens. It keeps local and remote records; it does not delete your Drive data or revoke the app's authorization on Google's account settings page.
 
