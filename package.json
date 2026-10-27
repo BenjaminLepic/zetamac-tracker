@@ -1,6 +1,6 @@
 {
   "name": "zetamac-training-log",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "private": true,
   "description": "Zetamac recorder with optional Google Drive sync",
   "scripts": {
