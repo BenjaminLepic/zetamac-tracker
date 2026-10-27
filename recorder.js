@@ -149,7 +149,7 @@
     shadow.innerHTML=`<style>:host{all:initial;position:fixed;right:16px;bottom:16px;z-index:2147483647;font:13px -apple-system,BlinkMacSystemFont,Arial,sans-serif;color:#152b48}details{width:250px;background:#f7faff;border:1px solid #b8cbea;border-radius:12px;box-shadow:0 4px 24px #152b4819}summary{cursor:pointer;padding:13px;font-weight:600}section{padding:0 13px 13px}label{display:flex;justify-content:space-between;align-items:center;margin:9px 0}select,button,textarea{font:inherit;border:1px solid #b8cbea;border-radius:5px;background:white;padding:5px;color:#152b48}button{cursor:pointer;width:100%;margin-top:6px}textarea{width:100%;box-sizing:border-box;resize:vertical;margin:5px 0}small{display:block;line-height:1.5;color:#526780}select:focus-visible,button:focus-visible,textarea:focus-visible{outline:2px solid #275bd8}</style><details><summary>Training log · <span id="status">Ready</span></summary><section><small>Records this game’s answer field. Conditions are optional and carry over.</small><div id="fields"></div><textarea id="notes" rows="2" aria-label="Optional notes" placeholder="Optional notes"></textarea><button id="download">Download this record</button><button id="dashboard">Records & backups</button></section></details>`;
     status=shadow.querySelector('#status');
     const fields=shadow.querySelector('#fields');
-    const updateMeta=()=>{if(session){session.metadata={...metadata};session.lifecycle.push({type:'conditions-updated',...stamp(),metadata:{...metadata}});save();}call({type:'setMetadata',metadata}).catch(()=>show('Could not save conditions'));};
+    const updateMeta=()=>{if(session){session.metadata={...metadata};session.metadataRevision=(session.metadataRevision||0)+1;session.lifecycle.push({type:'conditions-updated',...stamp(),metadata:{...metadata}});save();}call({type:'setMetadata',metadata}).catch(()=>show('Could not save conditions'));};
     for(const [key,label,choices] of [['music','Music',[['unknown','Unknown'],['yes','On'],['no','Off']]],['location','Location',[['unknown','Unknown'],['work','Work'],['home','Home'],['other','Other']]],['meeting','In a meeting',[['unknown','Unknown'],['yes','Yes'],['no','No']]],['glasses','Glasses',[['unknown','Unknown'],['yes','Yes'],['no','No']]]]) {
       const row=document.createElement('label'); row.textContent=label;
       const select=document.createElement('select'); select.dataset.meta=key;
@@ -167,7 +167,7 @@
   observer.observe(document,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['disabled']});
   call({type:'getRecorderState'}).then(data=>{
     metadata={...C.unknownMeta,...data.metadata}; loaded=true;
-    if(session){session.metadata={...metadata};save();} mount();sync();
+    if(session){session.metadata={...metadata};session.metadataRevision=(session.metadataRevision||0)+1;save();} mount();sync();
   }).catch(()=>{loaded=true;mount();show('Storage unavailable · download records here');sync();});
   // Checkpoints also detect completion if the game changes its DOM update pattern.
   setInterval(sync,1000);

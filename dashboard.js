@@ -101,6 +101,22 @@
   $('#add').onclick=()=>{const d=new Date();$('#add-form [name=date]').value=new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10);$('#add-dialog').showModal();};
   $('#add-form').onsubmit=async e=>{e.preventDefault();const data=new FormData(e.target);try{const s={id:crypto.randomUUID(),date:data.get('date'),startedAt:null,endedAt:null,status:'completed',score:Number(data.get('score')),source:'manual',settings:{...C.defaults},defaultSettings:true,questions:[],metadata:Object.fromEntries(['music','location','meeting','glasses','notes'].map(k=>[k,data.get(k)])),order:Math.max(0,...sessions.filter(s=>s.date===data.get('date')).map(s=>s.order||0))+1};await save(s);$('#add-dialog').close();e.target.reset();notify('Score saved');}catch(e){notify(e.message);}};
   if(!extension){$('#mode-banner').hidden=false;$('#mode-banner').textContent='Historical preview. To record games, load this folder as a Chrome / Edge extension, then open the dashboard from its toolbar button. Preview records are stored separately.';}
+  async function renderDrive(){
+    if(!extension)return;
+    const state=await call({type:'driveStatus'}),connected=!!state.connection;
+    $('#drive-panel').hidden=false;
+    $('#drive-connect').hidden=connected;$('#drive-sync').hidden=!connected;$('#drive-disconnect').hidden=!connected;
+    $('#drive-connect').disabled=!state.configured;
+    const email=state.connection?.account.email||'your Google account';
+    $('#drive-state').textContent=!state.configured?'Google setup is not configured yet.':state.error?state.error:!connected?'Not connected':state.state==='syncing'?'Syncing with '+email+'…':state.lastSyncedAt?'Connected as '+email+' · Last synced '+new Date(state.lastSyncedAt).toLocaleString():'Connected as '+email;
+    $('#drive-copy').textContent=connected?'Complete game records sync in the background. Local recording continues offline. Disconnect pauses sync and keeps your records.':'Connecting uploads your existing records and future games to this app’s private folder in your Google Drive. It also restores games from your other computers.';
+    $('#drive-panel').classList.toggle('error',!!state.error);
+  }
+  for(const [id,type]of [['drive-connect','driveConnect'],['drive-sync','driveSync'],['drive-disconnect','driveDisconnect']])$('#'+id).onclick=async()=>{
+    const button=$('#'+id);button.disabled=true;
+    try{await call({type});await read();render();await renderDrive();}catch(e){notify(e.message);}finally{button.disabled=false;}
+  };
+  if(extension){renderDrive().catch(e=>notify(e.message));chrome.storage.onChanged.addListener(changes=>{if(changes['drive:connection']||changes['drive:status'])renderDrive().catch(()=>{});});}
   if(extension)chrome.storage.onChanged.addListener(async changes=>{if(Object.keys(changes).some(k=>k.startsWith('session:'))){await read();render();}});
   let resizeTimer;window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(()=>renderChart(completed()),100);});
   try{await read();render();}catch(e){notify('Could not load records: '+e.message);}
