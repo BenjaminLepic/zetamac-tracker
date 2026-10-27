@@ -71,6 +71,8 @@ async function poll(fn,check,description){for(let i=0;i<100;i++){const v=await f
   await dashboard.goto(`chrome-extension://${extensionId}/dashboard.html`);
   await dashboard.locator('#sessions tr').first().waitFor();
   assert.equal(await dashboard.locator('#sessions tr').count(),17);
+  await dashboard.locator('#drive-panel').waitFor({state:'visible'});
+  assert.equal(await dashboard.locator('#drive-state').textContent(),JSON.parse(fs.readFileSync(path.join(base,'manifest.json'),'utf8')).oauth2?'Not connected':'Google setup is not configured yet.');
   await dashboard.locator('#sessions [data-open="'+firstId+'"]').click();
   assert.equal(await dashboard.locator('.question-list>li').count(),3);
   const downloadPromise=dashboard.waitForEvent('download');await dashboard.locator('#session-json').click();const download=await downloadPromise;

@@ -1,11 +1,36 @@
 {
   "manifest_version": 3,
   "name": "Zetamac Training Log",
-  "version": "1.0.0",
-  "description": "Record Zetamac scores, questions, answer-field keystrokes and training conditions locally.",
-  "permissions": ["storage", "unlimitedStorage"],
-  "background": {"service_worker": "background.js"},
-  "action": {"default_title": "Open Zetamac Training Log"},
-  "content_scripts": [{"matches": ["https://arithmetic.zetamac.com/*"], "js": ["core.js", "recorder.js"], "run_at": "document_start"}],
-  "options_page": "dashboard.html"
+  "version": "1.1.0",
+  "description": "Record complete Zetamac games locally, with optional Google Drive sync across computers.",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "identity",
+    "alarms"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Open Zetamac Training Log"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://arithmetic.zetamac.com/*"
+      ],
+      "js": [
+        "core.js",
+        "recorder.js"
+      ],
+      "run_at": "document_start"
+    }
+  ],
+  "options_page": "dashboard.html",
+  "host_permissions": [
+    "https://www.googleapis.com/*"
+  ],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtzK03zUTa3VNCMIYzfZ5vKhdjsGPP8+xRaeu7u6zCgAdkypwaOCWGq3NRV0HA7RJOgKz0W5SoFl08TCAI4vdg7EGGvSXYFTonlLtHBayZo7rjPU13gMOJnrcmqCYo9fQhdMZiJzH3SZ878zXetHfDyRpkrr37HeK/ULZV3fiYfUJ1Jfuzbs7w9IZQE0tM7kFx/0sn2xv6G6I7UlXhoDv5v/xS9cmpCp/+0WyaXcBXpLKe4RQISDJUC/yZK1OD6yCbS00PYRK+CrkGEC5jkptUndIGa3mqeIEh5g8QBNhOye52ixDBsNALZruvOq6v+2faK4oSHk6biWf6sxdzet5PwIDAQAB",
+  "minimum_chrome_version": "120"
 }

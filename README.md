@@ -1,6 +1,6 @@
 # Zetamac recorder
 
-A local Chrome / Edge extension that automatically recognizes games on [Zetamac](https://arithmetic.zetamac.com/). Recording is the main feature. No account, server, subscription or build step is required.
+A local Chrome / Edge extension that automatically recognizes games on [Zetamac](https://arithmetic.zetamac.com/). Recording is the main feature. Local recording needs no account, server, subscription or build step. Version 1.1 adds optional Google Drive sync.
 
 ## Install once
 
@@ -28,6 +28,32 @@ The recorder uses the score increment to recognize acceptance. Identical consecu
 
 **Scope:** keys are collected only inside Zetamac's answer field during a game. Other sites, other applications, settings fields and metadata notes are not keylogged. Keys released after leaving the field may not be observable. The extension does not answer questions or change Zetamac's game logic.
 
+## Google Drive sync
+
+Once Google's OAuth client is configured, open **Records & backups** and choose **Connect Google Drive**. Approve access to the application's own data folder. It does not request access to your other Drive files.
+
+Connecting uploads existing local game records, including full questions, key events and notes, and downloads records from that same Google account on other computers. Completed games and edits queue background sync after about 30 seconds; a periodic check runs about every two minutes while Chrome is running. **Sync now** runs a check immediately. Browser scheduling and network conditions can delay these checks. Games still record locally when offline. Older in-progress checkpoints can also sync after 45 seconds without edits; current game activity is never uploaded on every keypress.
+
+The account email, last successful sync and any errors appear in the sync panel. **Disconnect** pauses syncing and clears the extension's cached Google tokens. It keeps local and remote records; it does not delete your Drive data or revoke the app's authorization on Google's account settings page.
+
+Google authentication for this build uses Google Chrome's Identity API. Local recording and JSON export also work in Edge; Google account sync in Edge is not configured in this release.
+
+The hidden Drive app-data folder is not browsable in Drive's normal file interface. Use the extension's JSON export to keep a readable, portable backup. Sync uses immutable game revisions, so recorded answers and annotations merge independently. Deletions propagate via a deletion marker. An explicit JSON import can restore a deleted game. Each changed revision can occupy additional Drive storage.
+
+If the panel says **Google setup is not configured yet**, the project owner must complete [Google configuration](GOOGLE_SYNC_SETUP.md). Sign-in alone cannot enable an unconfigured OAuth client.
+
+### Upgrade from the original recorder
+
+The sync build has a fixed extension ID so Google login works on different computers. Its ID is `gnlfkgljonacgidhoagoldhhehjlnenb`.
+
+1. In your old extension, choose **Export backup** before removing or changing anything.
+2. Load the new `zetamac-tracker-sync` folder as an unpacked extension. If you already use the fixed ID, reload that installation instead.
+3. Import your backup in the new extension, then connect Google Drive.
+4. Once your records are verified, disable the old recorder so two versions do not record the same game.
+5. On another computer, load this same new build and connect the same Google account. Records download automatically.
+
+The old installation is left intact while this separate update is prepared. Chrome does not automatically migrate storage between different extension IDs. No recorded games are automatically committed to GitHub.
+
 ## Conditions are optional
 
 Expand the Training log panel to choose music, location, meeting status and glasses, or leave them unknown. A notes field accepts other context. Choices carry over to your next game. Changing a condition during a game also creates a timestamped lifecycle event. Notes save when you leave the notes field.
@@ -45,7 +71,7 @@ Click the extension's toolbar icon for records and backups:
 - **Import** merges a JSON backup by session ID. Matching IDs are replaced, so import while no game is running. Reimporting a backup does not duplicate its sessions.
 - Conditions and dates can be edited; raw question/event data is retained. A running recorder's panel controls its conditions; avoid editing that session elsewhere until the game ends.
 
-Storage is local to the browser profile. The extension makes no network requests and sends no data to an external service. It requests `storage` and `unlimitedStorage`, with a content script restricted to `https://arithmetic.zetamac.com/*`. Zetamac's own normal requests are unchanged.
+Storage is local to the browser profile. With Drive disconnected, the extension makes no network requests. When connected, it sends complete records to Google Drive using only the `drive.appdata` OAuth scope. It requests `storage`, `unlimitedStorage`, `identity`, `alarms` and API access to `https://www.googleapis.com/*`, with a content script restricted to `https://arithmetic.zetamac.com/*`. Zetamac's own normal requests are unchanged. Google tokens are managed by Chrome's Identity API; they are not included in backups or stored in the repository.
 
 Export backups regularly. Removing the extension or clearing its data deletes local records. Reloading an unpacked extension preserves its storage when its folder stays the same. The folder itself is **not** where Chrome stores recorded sessions.
 
@@ -55,7 +81,7 @@ A normal navigation checkpoints a partial game. A crash or abrupt browser shutdo
 
 The extension imports the 16 supplied scores once, dated **26 October 2024**, in the supplied order. There is no invented time of day or keystroke detail. Meeting is “no” for all 16. Only session 12 has glasses; the last four sessions are home. Their average is **44.5625** and their best score is **57**.
 
-The separate `historical-scores.json` file is a backup of those records. They are also built into the extension, so importing it is optional.
+The included `historical-scores.json` file is a backup of those records. They are also built into the extension, so importing it is optional.
 
 ## Default-settings classification
 
@@ -67,7 +93,7 @@ Opening `dashboard.html` as a normal file displays the historical records and pe
 
 ## Verification / development
 
-Runtime has no dependencies. To run the included automated integration test, use Node.js 20+:
+Runtime has no dependencies. `npm run test:sync` tests the sync engine without a browser or Google account. To run the included automated integration test, use Node.js 20+:
 
 ```sh
 npm install
@@ -75,6 +101,6 @@ npx playwright install chromium
 npm test
 ```
 
-Tests load the real extension into a temporary Chrome for Testing profile, fetch the current Zetamac game module, block score-log submissions, and exercise real input events. They check corrections, identical successive questions, non-keyboard input, metadata isolation and carry-over, completion, custom settings, partial-game persistence, raw JSON export, backup round trips, and storage across browser restarts. They also check the dashboard for JavaScript errors and narrow-screen overflow. Test-generated games stay in the temporary profile.
+Tests load the real extension into a temporary Chrome for Testing profile, fetch the current Zetamac game module, block score-log submissions, and exercise real input events. They check corrections, identical successive questions, non-keyboard input, metadata isolation and carry-over, completion, custom settings, partial-game persistence, raw JSON export, backup round trips, and storage across browser restarts. The sync tests use a simulated Drive service to check cross-device merges, deletion markers, account isolation, expired tokens, retry behavior, and offline recording. They also check the dashboard for JavaScript errors and narrow-screen overflow. Test-generated games stay in the temporary profile.
 
 If Zetamac changes its DOM or its module's settings format, the selectors/parser may require an update. Current capture points are `#game .problem`, `#game .correct`, `#game input.answer`, and the inline module's `init({...})` call.
